@@ -1,9 +1,8 @@
 package com.infra;
 
-import com.infra.interfaces.ReadLine;
+import com.infra.interfaces.FileReaderEvents;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -11,16 +10,34 @@ public class FileReader {
   private String path;
   private boolean isPaused;
   private int line = 0;
-  private ReadLine event;
+  private FileReaderEvents event;
+
   public FileReader(String path) {
     this.path = path;
   }
+
+
+  public String read() throws Exception {
+    StringBuilder source = new StringBuilder();
+    InputStream inputStream = FileReader.class.getResourceAsStream
+       (path);
+    BufferedReader reader = new BufferedReader(new InputStreamReader
+       (inputStream));
+    String strLine;
+    while (((strLine = reader.readLine()) != null)) {
+      source.append(strLine).append("\n");
+    }
+    return source.toString();
+  }
+
   public boolean fileExists() {
     return FileReader.class.getResourceAsStream(path) != null;
   }
-  public void addReadeLineEvent(ReadLine callback) {
+
+  public void addReadeLineEvent(FileReaderEvents callback) {
     this.event = callback;
   }
+
   private void startReader(int i_line) {
     try {
       InputStream inputStream = FileReader.class.getResourceAsStream(path);
@@ -43,14 +60,17 @@ public class FileReader {
       e.printStackTrace();
     }
   }
+
   public void start() {
     isPaused = false;
     startReader(0);
   }
+
   public void continueReader() {
     isPaused = false;
     startReader(this.line);
   }
+
   public void pause() {
     isPaused = true;
   }
