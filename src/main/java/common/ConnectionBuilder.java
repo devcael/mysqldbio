@@ -22,6 +22,7 @@ public class ConnectionBuilder {
   private String port;
   private Connection doConnect(String driver, String url, String username, String password) throws SQLException, ClassNotFoundException {
     Class.forName(driver);
+    System.out.println("Connection Url: " + url);
     return  DriverManager.getConnection(url, username, password);
   }
   public Connection createConnection() throws Exception {
